@@ -6,34 +6,15 @@ import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import { getNotes } from "@/lib/api";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Metadata } from 'next';
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 type Props = {
-  category?: string;
+  tag?: string;
 };
 
-export const metadata: Metadata = {
-  title: `Notehub - Create Note`,
-  description: "Create a new note on NoteHub",
-  openGraph: {
-    title: `Notehub`,
-    description: "Create new note",
-    url: `https://notehub.com/action/create`,
-    siteName: 'NoteHub',
-    images: [{
-        url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
-        width: 1200,
-        height: 630,
-        alt: "NoteHub",
-      },],
-      type: 'website',
-  },
-}
-
-export default function NotesClient({ category }: Props) {
+export default function NotesClient({ tag }: Props) {
   const router = useRouter();
 
   const [query, setQuery] = useState('');
@@ -45,11 +26,11 @@ export default function NotesClient({ category }: Props) {
   }, 300);
 
   const { data, isSuccess } = useQuery({
-    queryKey: ["notes", query, currentPage, category],
+    queryKey: ["notes", query, currentPage, tag],
     queryFn: () => getNotes({
                         search: query,
                         page: currentPage,
-                        tag: category,
+                        tag: tag,
                     }),
     placeholderData: keepPreviousData,
   });

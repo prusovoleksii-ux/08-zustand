@@ -8,12 +8,13 @@ import type { NewNoteValues } from '@/types/note';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postNote } from '@/lib/api';
 import * as Yup from "yup";
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useNoteDraftStore } from '@/lib/store/noteStore';
 
 
 export default function NoteForm() {
     const queryClient = useQueryClient();
+    const router = useRouter();
 
     const handleCancel = () => router.push('/notes/filter/all');
 
@@ -25,12 +26,6 @@ export default function NoteForm() {
             [event.target.name]: event.target.value,
         });
     };
-
-    const initialValues: NewNoteValues = {
-        title: '',
-        content: '',
-        tag: 'Todo',
-    }
 
     const NewNoteSchema = Yup.object().shape({
         title: Yup.string()
@@ -61,7 +56,11 @@ export default function NoteForm() {
 
     return (
         <>
-        <Formik initialValues={initialValues} 
+        <Formik initialValues={{
+                title: draft?.title ?? "",
+                content: draft?.content ?? "",
+                tag: draft?.tag ?? "Todo",
+            }} 
                 onSubmit={handleSubmit}
                 validationSchema={NewNoteSchema}>
             <Form className={css.form}>
@@ -71,8 +70,7 @@ export default function NoteForm() {
                     type="text" 
                     name="title" 
                     className={css.input} 
-                    onChange={handleChange} 
-                    defaultValue={draft?.title} />
+                    onChange={handleChange} />
                     <ErrorMessage name="title" component="span" className={css.error} />
                 </div>
 
@@ -83,14 +81,13 @@ export default function NoteForm() {
                     name="content"
                     rows={8}
                     className={css.textarea}
-                    onChange={handleChange}
-                    defaultValue={draft?.content} />
+                    onChange={handleChange} />
                     <ErrorMessage name="content" component="span" className={css.error} />
                 </div>
 
                 <div className={css.formGroup}>
                     <label htmlFor="tag">Tag</label>
-                    <Field as="select" id="tag" name="tag" className={css.select} onChange={handleChange} defaultValue={draft?.tag}>
+                    <Field as="select" id="tag" name="tag" className={css.select} onChange={handleChange}>
                         <option value="Todo">Todo</option>
                         <option value="Work">Work</option>
                         <option value="Personal">Personal</option>
