@@ -2,29 +2,30 @@
 
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css'
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface ModalProps {
   children: React.ReactNode;
-  onClose: () => void;
 }
 
-export default function Modal({children, onClose}: ModalProps) {
+export default function Modal({children}: ModalProps) {
 
   const router = useRouter();
-  const close = () => router.back();
+  const close = useCallback(() => {
+    router.back();
+  }, [router]);
 
   const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (event.target === event.currentTarget) {
-      onClose();
+      close();
     }
   };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        onClose();
+        close();
       }
     }
 
@@ -35,7 +36,7 @@ export default function Modal({children, onClose}: ModalProps) {
       document.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
+  }, [close]);
 
   return createPortal(
     <div

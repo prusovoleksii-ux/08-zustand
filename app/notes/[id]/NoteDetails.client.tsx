@@ -3,15 +3,12 @@
 import css from "./NoteDetails.module.css"
 import { useQuery } from "@tanstack/react-query";
 import { fetchNoteById } from "@/lib/api";
-import { useRouter } from 'next/navigation';
 
 type Props = {
   id: string;
 };
 
 const NoteDetailsClient = ({ id }: Props) => {
-  const router = useRouter();
-
 
   const { data: note, isLoading, error } = useQuery({
     queryKey: ["note", id],
@@ -23,16 +20,8 @@ const NoteDetailsClient = ({ id }: Props) => {
 
   if (error || !note) return <p>Something went wrong.</p>;
 
-  const handleGoBack = () => {
-      const isSure = confirm('Are you sure?');
-    if (isSure) {
-      router.back();
-    }
-  };
-
   return (
     <>
-    <button onClick={handleGoBack}>Back</button>
     <div className={css.container}>
       <div className={css.item}>
         <div className={css.header}>

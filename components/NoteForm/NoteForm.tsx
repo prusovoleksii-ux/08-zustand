@@ -1,3 +1,5 @@
+'use client'
+
 import { ErrorMessage, Field, 
         Form, 
         Formik } from 'formik';
@@ -6,13 +8,23 @@ import type { NewNoteValues } from '@/types/note';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postNote } from '@/lib/api';
 import * as Yup from "yup";
+import router from 'next/router';
+import { useNoteDraftStore } from '@/lib/store/Store';
 
-interface NoteFormProps {
-    onClose: () => void;
-}
 
-export default function NoteForm({onClose}: NoteFormProps) {
+export default function NoteForm() {
     const queryClient = useQueryClient();
+
+    const handleCancel = () => router.push('/notes/filter/all');
+
+    const {draft, setDraft, clearDraft} = useNoteDraftStore();
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,) => {
+        setDraft({
+            ...draft,
+            [event.target.name]: event.target.value,
+        });
+    };
 
     const initialValues: NewNoteValues = {
         title: '',
@@ -37,8 +49,9 @@ export default function NoteForm({onClose}: NoteFormProps) {
         mutationFn: (newNote: NewNoteValues) => postNote(newNote),
         onSuccess: () => {
             console.log("Note added successfully!");
+            clearDraft();
             queryClient.invalidateQueries({ queryKey: ['notes'] });
-            onClose();
+            handleCancel();
         },
     });
 
@@ -54,7 +67,12 @@ export default function NoteForm({onClose}: NoteFormProps) {
             <Form className={css.form}>
                 <div className={css.formGroup}>
                     <label htmlFor="title">Title</label>
-                    <Field id="title" type="text" name="title" className={css.input} />
+                    <Field id="title" 
+                    type="text" 
+                    name="title" 
+                    className={css.input} 
+                    onChange={handleChange} 
+                    defaultValue={draft?.title} />
                     <ErrorMessage name="title" component="span" className={css.error} />
                 </div>
 
@@ -65,13 +83,14 @@ export default function NoteForm({onClose}: NoteFormProps) {
                     name="content"
                     rows={8}
                     className={css.textarea}
-                    />
+                    onChange={handleChange}
+                    defaultValue={draft?.content} />
                     <ErrorMessage name="content" component="span" className={css.error} />
                 </div>
 
                 <div className={css.formGroup}>
                     <label htmlFor="tag">Tag</label>
-                    <Field as="select" id="tag" name="tag" className={css.select}>
+                    <Field as="select" id="tag" name="tag" className={css.select} onChange={handleChange} defaultValue={draft?.tag}>
                         <option value="Todo">Todo</option>
                         <option value="Work">Work</option>
                         <option value="Personal">Personal</option>
@@ -82,7 +101,7 @@ export default function NoteForm({onClose}: NoteFormProps) {
                 </div>
 
                 <div className={css.actions}>
-                    <button type="button" className={css.cancelButton} onClick={onClose}>
+                    <button type="button" className={css.cancelButton} onClick={handleCancel}>
                         Cancel
                     </button>
                     <button

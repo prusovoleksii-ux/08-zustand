@@ -4,13 +4,11 @@ import css from './NotePreview.module.css';
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from 'next/navigation';
 import { fetchNoteById } from "@/lib/api";
-import { useRouter } from 'next/navigation';
 import Modal from '@/components/Modal/Modal';
 
 
 const NotePreviewClient = () => {
 	const { id } = useParams<{ id: string }>();
-    const router = useRouter();
 
 
   const { data: note, isLoading, error } = useQuery({
@@ -23,13 +21,8 @@ const NotePreviewClient = () => {
 
   if (error || !note) return <p>Something went wrong.</p>;
 
-  const handleGoBack = () => {
-    router.back();
-  };
-
   return (
-    <Modal onClose={handleGoBack}>
-    <button onClick={handleGoBack}>Back</button>
+    <Modal>
     <div className={css.container}>
       <div className={css.item}>
         <div className={css.header}>

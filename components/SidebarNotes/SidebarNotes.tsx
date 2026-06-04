@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import css from './SidebarNotes.module.css'
 
 const categories = [
@@ -10,6 +11,8 @@ const categories = [
 
 export default function SidebarNotes() {
     return (
+        <>
+        <Link href="/notes/action/create">Create note</Link>
         <ul className={css.menuList}>
             {/* список тегів */}
             <li className={css.menuItem}>
@@ -26,5 +29,6 @@ export default function SidebarNotes() {
             ))}
             
         </ul>
+        </>
     )
 }
