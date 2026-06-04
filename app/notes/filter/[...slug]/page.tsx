@@ -9,20 +9,20 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const category = slug?.[0] && slug[0] !== "all" ? slug[0] : "all";
+  const tag = slug?.[0] && slug[0] !== "all" ? slug[0] : "all";
   return {
-    title: `Notes: ${category}`,
-    description: `Notes filtered by ${category}`,
+    title: `Notes: ${tag}`,
+    description: `Notes filtered by ${tag}`,
     openGraph: {
-      title: `Notes: ${category}`,
-      description: `Notes filtered by ${category}`,
-      url: `https://notehub.com/notes/${category}`,
+      title: `Notes: ${tag}`,
+      description: `Notes filtered by ${tag}`,
+      url: `https://notehub.com/notes/${tag}`,
       siteName: 'NoteHub',
       images: [{
           url: 'https://ac.goit.global/fullstack/react/og-meta.jpg',
           width: 1200,
           height: 630,
-          alt: category,
+          alt: tag,
         },],
         type: 'website',
     },
@@ -31,22 +31,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function NotesPage({ params }: Props) {
   const { slug } = await params;
-  const category = slug?.[0] && slug[0] !== "all" ? slug[0] : undefined;
+  const tag = slug?.[0] && slug[0] !== "all" ? slug[0] : undefined;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["notes", "", 1, category],
+    queryKey: ["notes", "", 1, tag],
     queryFn: () => getNotes({
       search: "",
       page: 1,
-      tag: category,
+      tag: tag,
     }),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NotesClient category={category} />
+      <NotesClient tag={tag} />
     </HydrationBoundary>
   );
 }
