@@ -9,7 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { postNote } from '@/lib/api';
 import * as Yup from "yup";
 import router from 'next/router';
-import { useNoteDraftStore } from '@/lib/store/Store';
+import { useNoteDraftStore } from '@/lib/store/noteStore';
 
 
 export default function NoteForm() {
